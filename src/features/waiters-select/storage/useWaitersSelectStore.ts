@@ -10,24 +10,14 @@ interface State {
 
 interface Actions {
   setIsOpen: (isOpen: boolean) => void;
-  toggleWaiterSelected: (waiterId: ID) => void;
   unselectAll: () => void;
+  setSelectedWaiters: (selectedWaiters: Set<ID>) => void;
 }
 
 export const useWaitersSelectStore = create<State & Actions>((set) => ({
   isOpen: false,
   selectedWaiters: new Set(),
-
   setIsOpen: (isOpen) => set({ isOpen }),
-  toggleWaiterSelected: (waiterId) =>
-    set((prev) => {
-      const selectedWaiters = new Set(prev.selectedWaiters);
-      if (selectedWaiters.has(waiterId)) {
-        selectedWaiters.delete(waiterId);
-      } else {
-        selectedWaiters.add(waiterId);
-      }
-      return { ...prev, selectedWaiters };
-    }),
   unselectAll: () => set({ selectedWaiters: new Set() }),
+  setSelectedWaiters: (selectedWaiters) => set({ selectedWaiters }),
 }));

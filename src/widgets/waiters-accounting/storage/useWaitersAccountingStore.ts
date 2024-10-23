@@ -1,44 +1,27 @@
 import { IWaiter } from "@/entities/waiter";
-import {
-  WaiterCardChangeHandler,
-  WaiterHoursChangeHandler,
-} from "@/shared/model";
 import { create } from "zustand";
-
-type ID = IWaiter["id"];
 
 interface State {
   cashTips: number;
-  waitersHours: Map<ID, number>;
-  waitersCards: Map<ID, number>;
-  waitersEarnings: Map<ID, number>;
+  hours: Map<IWaiter["id"], number>;
+  cards: Map<IWaiter["id"], number>;
+  earnings: Map<IWaiter["id"], number>;
 }
 
 interface Actions {
   setCashTips: (cashTips: number) => void;
-  setWaiterHours: WaiterHoursChangeHandler;
-  setWaiterCard: WaiterCardChangeHandler;
-  setWaitersEarnings: (waitersEarnings: Map<ID, number>) => void;
+  setHours: (hours: Map<IWaiter["id"], number>) => void;
+  setCards: (cards: Map<IWaiter["id"], number>) => void;
+  setEarnings: (earnings: Map<IWaiter["id"], number>) => void;
 }
 
 export const useWaitersAccountingStore = create<State & Actions>((set) => ({
   cashTips: 0,
-  waitersHours: new Map(),
-  waitersCards: new Map(),
-  waitersEarnings: new Map(),
-
+  hours: new Map(),
+  cards: new Map(),
+  earnings: new Map(),
   setCashTips: (cashTips) => set({ cashTips }),
-  setWaiterHours: (waiterId, hours) =>
-    set((prev) => {
-      const waitersHours = new Map(prev.waitersHours);
-      waitersHours.set(waiterId, hours);
-      return { waitersHours };
-    }),
-  setWaiterCard: (waiterId, hours) =>
-    set((prev) => {
-      const waitersCards = new Map(prev.waitersCards);
-      waitersCards.set(waiterId, hours);
-      return { waitersCards };
-    }),
-  setWaitersEarnings: (waitersEarnings) => set({ waitersEarnings }),
+  setHours: (hours) => set({ hours }),
+  setCards: (cards) => set({ cards }),
+  setEarnings: (earnings) => set({ earnings }),
 }));

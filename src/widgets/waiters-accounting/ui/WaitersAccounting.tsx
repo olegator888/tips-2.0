@@ -21,67 +21,134 @@ const tableHead = ["Официант", "На карте", "Часы", "Чаев�
 
 export const WaitersAccounting = () => {
   const { waitersList } = useWaitersListStore();
-  const { selectedWaiters: selectedWaitersIds } = useWaitersSelectStore();
+  const { selectedWaiters: selectedWaitersIds, setSelectedWaiters } =
+    useWaitersSelectStore();
   const {
-    waitersHours,
-    waitersCards,
-    waitersEarnings,
     cashTips,
     setCashTips,
-    setWaiterHours,
-    setWaiterCard,
-    setWaitersEarnings,
+    hours,
+    cards,
+    earnings,
+    setHours,
+    setCards,
+    setEarnings,
   } = useWaitersAccountingStore();
 
   const selectedWaiters = waitersList
     .filter((waiter) => selectedWaitersIds.has(waiter.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  const toggleWaiterSelected = useCallback(
+    (waiter: IWaiter) => {
+      const newSelectedWaiters = new Set(selectedWaitersIds);
+
+      const newHours = new Map(hours);
+      const newCards = new Map(cards);
+      const newEarnings = new Map(earnings);
+      const isSelected = newSelectedWaiters.has(waiter.id);
+
+      if (isSelected) {
+        newCards.delete(waiter.id);
+        newHours.delete(waiter.id);
+        newEarnings.delete(waiter.id);
+        newSelectedWaiters.delete(waiter.id);
+      } else {
+        newHours.set(waiter.id, 12);
+        newCards.set(waiter.id, 0);
+        newEarnings.set(waiter.id, 0);
+        newSelectedWaiters.add(waiter.id);
+      }
+
+      setCards(newCards);
+      setHours(newHours);
+      setEarnings(newEarnings);
+      setSelectedWaiters(newSelectedWaiters);
+
+      computeWaitersEarnings({
+        cashTips,
+        hours: newHours,
+        cards: newCards,
+        selectedWaitersIds: newSelectedWaiters,
+      });
+    },
+    [hours, cards, earnings, selectedWaitersIds, setSelectedWaiters]
+  );
+
   const openWaitersSelect = () =>
     useWaitersSelectStore.setState({ isOpen: true });
 
+  const computeWaitersEarnings = useCallback(
+    ({
+      cashTips,
+      hours,
+      cards,
+      selectedWaitersIds,
+    }: {
+      cashTips: number;
+      hours: Map<string, number>;
+      cards: Map<string, number>;
+      selectedWaitersIds: Set<IWaiter["id"]>;
+    }) => {
+      const totalTips =
+        cashTips + [...cards.values()].reduce((acc, curr) => acc + curr, 0);
+      let totalHours = [...hours.values()].reduce((acc, curr) => acc + curr, 0);
+      const tipsPerHour = totalTips / totalHours;
+
+      const earnings = new Map();
+      for (const waiterId of selectedWaitersIds) {
+        earnings.set(
+          waiterId,
+          Math.floor(tipsPerHour * (hours.get(waiterId) || 0))
+        );
+      }
+
+      setEarnings(earnings);
+    },
+    [setEarnings]
+  );
+
   const handleWaiterHoursChange: WaiterHoursChangeHandler = useCallback(
-    (waiterId, hours) => setWaiterHours(waiterId, hours),
-    [setWaiterHours]
+    (waiterId, hoursValue) => {
+      const newHours = new Map(hours);
+      newHours.set(waiterId, hoursValue);
+      setHours(newHours);
+      computeWaitersEarnings({
+        cashTips,
+        hours: newHours,
+        cards,
+        selectedWaitersIds,
+      });
+    },
+    [hours, setHours, computeWaitersEarnings, cashTips, cards]
   );
 
   const handleWaiterCardChange: WaiterCardChangeHandler = useCallback(
-    (waiterId, card) => setWaiterCard(waiterId, card),
-    [setWaiterCard]
+    (waiterId, cardValue) => {
+      const newCards = new Map(cards);
+      newCards.set(waiterId, cardValue);
+      setCards(newCards);
+      computeWaitersEarnings({
+        cashTips,
+        hours,
+        cards: newCards,
+        selectedWaitersIds,
+      });
+    },
+    [cards, setCards, computeWaitersEarnings, cashTips, hours]
   );
 
   const handleTotalTipsChange: InputChangeHandler = useCallback(
     (e) => {
       const cashTips = Number(normalizeInputNumberValue(e.target.value));
-      const totalTips =
-        cashTips +
-        Object.values(waitersCards).reduce((acc, cur) => acc + cur, 0);
-      const totalHours = Object.values(waitersHours).reduce(
-        (acc, cur) => acc + cur,
-        0
-      );
-      const hourMoney = Math.floor(totalTips / totalHours);
-
-      const waitersEarnings = new Map<IWaiter["id"], number>();
-
-      selectedWaitersIds.forEach((waiterId) =>
-        waitersEarnings.set(
-          waiterId,
-          hourMoney * (waitersHours.get(waiterId) || 0) -
-            (waitersCards.get(waiterId) || 0)
-        )
-      );
-
-      setWaitersEarnings(waitersEarnings);
+      computeWaitersEarnings({
+        cashTips,
+        hours,
+        cards,
+        selectedWaitersIds,
+      });
       setCashTips(cashTips);
     },
-    [
-      selectedWaiters,
-      waitersHours,
-      waitersCards,
-      setCashTips,
-      setWaitersEarnings,
-    ]
+    [computeWaitersEarnings, setCashTips, hours, cards]
   );
 
   return (
@@ -120,9 +187,9 @@ export const WaitersAccounting = () => {
                     index={i}
                     waiter={{
                       ...waiter,
-                      hours: waitersHours.get(waiter.id) || 12,
-                      card: waitersCards.get(waiter.id) || 0,
-                      earnings: waitersEarnings.get(waiter.id) || 0,
+                      hours: hours.get(waiter.id) || 0,
+                      card: cards.get(waiter.id) || 0,
+                      earnings: earnings.get(waiter.id) || 0,
                     }}
                     onHoursChange={handleWaiterHoursChange}
                     onCardChange={handleWaiterCardChange}
@@ -147,7 +214,7 @@ export const WaitersAccounting = () => {
           )}
         </div>
       </div>
-      <WaitersSelect />
+      <WaitersSelect toggleWaiterSelected={toggleWaiterSelected} />
     </>
   );
 };

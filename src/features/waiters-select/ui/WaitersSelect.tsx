@@ -6,32 +6,25 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/shared/ui";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { useWaitersListStore } from "@/shared/storage/waiter";
 import { useWaitersSelectStore } from "../storage";
 import { WaitersSelectCard } from "./WaitersSelectCard.tsx";
+import { IWaiter } from "@/entities/waiter";
 
-export const WaitersSelect = () => {
-  const {
-    isOpen,
-    selectedWaiters,
-    setIsOpen,
-    toggleWaiterSelected,
-    unselectAll,
-  } = useWaitersSelectStore();
+interface Props {
+  toggleWaiterSelected: (waiter: IWaiter) => void;
+}
+
+export const WaitersSelect = memo((props: Props) => {
+  const { toggleWaiterSelected } = props;
+
+  const { isOpen, selectedWaiters, setIsOpen, unselectAll } =
+    useWaitersSelectStore();
   const { waitersList } = useWaitersListStore();
 
   const waitersSorted = useMemo(
-    () =>
-      waitersList.sort((a, b) => {
-        // if (selectedWaiters.has(a.id) && !selectedWaiters.has(b.id)) {
-        //   return -1;
-        // }
-        // if (selectedWaiters.has(b.id) && !selectedWaiters.has(a.id)) {
-        //   return 1;
-        // }
-        return a.name.localeCompare(b.name);
-      }),
+    () => waitersList.sort((a, b) => a.name.localeCompare(b.name)),
     [waitersList]
   );
 
@@ -72,4 +65,4 @@ export const WaitersSelect = () => {
       </DrawerContent>
     </Drawer>
   );
-};
+});

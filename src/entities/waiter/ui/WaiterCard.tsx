@@ -29,11 +29,18 @@ export const WaiterCard = memo((props: WaiterCardProps) => {
     <div
       className={cn(
         "h-[40px] grid items-center text-sm border-b last:border-none relative px-1",
-        type === "list" && "grid-cols-2",
+        type === "list" && "grid-cols-[1fr_50px]",
         type === "accounting" && waiterAccountingCardGrid
       )}
     >
-      <div>{waiter.name}</div>
+      <div className="flex items-center gap-2 w-full overflow-hidden">
+        {type === "accounting" && (
+          <div className="font-medium">{props.index + 1}.</div>
+        )}
+        <div className="whitespace-nowrap overflow-hidden text-ellipsis">
+          {waiter.name}
+        </div>
+      </div>
       {type === "accounting" && (
         <>
           <div className="flex items-center justify-center">
@@ -48,7 +55,7 @@ export const WaiterCard = memo((props: WaiterCardProps) => {
           <div className="flex items-center justify-center">
             <select value={waiter.hours} onChange={handleHoursChange}>
               {Array.from({ length: 12 }).map((_, i) => (
-                <option>{i + 1}</option>
+                <option key={i}>{i + 1}</option>
               ))}
             </select>
           </div>
