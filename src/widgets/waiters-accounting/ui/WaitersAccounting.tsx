@@ -74,6 +74,13 @@ export const WaitersAccounting = () => {
     [hours, cards, earnings, selectedWaitersIds, setSelectedWaiters]
   );
 
+  const handleUnselectAll = () => {
+    setSelectedWaiters(new Set());
+    setHours(new Map());
+    setCards(new Map());
+    setEarnings(new Map());
+  };
+
   const openWaitersSelect = () =>
     useWaitersSelectStore.setState({ isOpen: true });
 
@@ -214,7 +221,10 @@ export const WaitersAccounting = () => {
           )}
         </div>
       </div>
-      <WaitersSelect toggleWaiterSelected={toggleWaiterSelected} />
+      <WaitersSelect
+        toggleWaiterSelected={toggleWaiterSelected}
+        unselectAll={handleUnselectAll}
+      />
     </>
   );
 };

@@ -13,14 +13,14 @@ import { WaitersSelectCard } from "./WaitersSelectCard.tsx";
 import { IWaiter } from "@/entities/waiter";
 
 interface Props {
+  unselectAll: () => void;
   toggleWaiterSelected: (waiter: IWaiter) => void;
 }
 
 export const WaitersSelect = memo((props: Props) => {
-  const { toggleWaiterSelected } = props;
+  const { toggleWaiterSelected, unselectAll } = props;
 
-  const { isOpen, selectedWaiters, setIsOpen, unselectAll } =
-    useWaitersSelectStore();
+  const { isOpen, selectedWaiters, setIsOpen } = useWaitersSelectStore();
   const { waitersList } = useWaitersListStore();
 
   const waitersSorted = useMemo(
