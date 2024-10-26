@@ -16,7 +16,7 @@ export const WaitersList = () => {
 
   const handleRemoveWaiter = (waiterId: IWaiter["id"]) => {
     removeWaiter(waiterId);
-    toggleWaiterSelected(waiterId);
+    toggleWaiterSelected(waiterId, true);
   };
 
   return (

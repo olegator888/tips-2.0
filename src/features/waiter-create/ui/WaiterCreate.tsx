@@ -1,5 +1,5 @@
 import { Button, Input } from "@/shared/ui";
-import { IoAdd } from "react-icons/io5";
+import { FaPlus } from "react-icons/fa";
 import { FormEvent, useState } from "react";
 import { InputChangeHandler } from "@/shared/model";
 import { useWaitersListStore } from "@/shared/storage/waiter";
@@ -40,7 +40,7 @@ export const WaiterCreate = () => {
         onChange={onNameChange}
       />
       <Button className="shrink-0">
-        <IoAdd />
+        <FaPlus className="w-3 h-3" />
       </Button>
     </form>
   );

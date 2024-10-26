@@ -1,15 +1,13 @@
 import { WaiterCard } from "@/entities/waiter";
-import {
-  useWaitersSelectStore,
-  WaitersSelect,
-} from "@/features/waiters-select";
+import { WaitersSelect } from "@/features/waiters-select";
 import {
   useWaitersAccountingStore,
   useWaitersListStore,
+  useWaitersSelectStore,
 } from "@/shared/storage/waiter";
 import { cn } from "@/shared/lib";
 import { waiterAccountingCardGrid } from "@/shared/constants";
-import { Button, Input } from "@/shared/ui";
+import { Button, Input, Empty } from "@/shared/ui";
 import {
   InputChangeHandler,
   WaiterCardChangeHandler,
@@ -106,12 +104,11 @@ export const WaitersAccounting = () => {
       <div className="flex flex-col overflow-y-hidden h-full">
         <div className="flex flex-col overflow-y-hidden h-full">
           {selectedWaiters.length === 0 && (
-            <div className="flex flex-col items-center justify-center gap-5 h-full">
-              <p className="text-[18px] text-center italic text-muted-foreground max-w-[350px]">
-                Выберите официантов текущей смены, чтобы посчитать их чаевые
-              </p>
-              <Button onClick={openWaitersSelect}>Выбрать</Button>
-            </div>
+            <Empty
+              text="Выберите официантов текущей смены, чтобы посчитать их чаевые"
+              actionText="Выбрать"
+              action={openWaitersSelect}
+            />
           )}
           {selectedWaiters.length > 0 && (
             <>

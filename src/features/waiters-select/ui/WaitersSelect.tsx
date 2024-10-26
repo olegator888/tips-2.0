@@ -7,8 +7,10 @@ import {
   DrawerTitle,
 } from "@/shared/ui";
 import { memo, useEffect, useMemo } from "react";
-import { useWaitersListStore } from "@/shared/storage/waiter";
-import { useWaitersSelectStore } from "../storage";
+import {
+  useWaitersListStore,
+  useWaitersSelectStore,
+} from "@/shared/storage/waiter";
 import { WaitersSelectCard } from "./WaitersSelectCard.tsx";
 import { IWaiter } from "@/entities/waiter";
 
