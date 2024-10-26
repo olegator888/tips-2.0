@@ -1,10 +1,12 @@
-import { IWaiter, WaiterCard } from "@/entities/waiter";
+import { WaiterCard } from "@/entities/waiter";
 import {
   useWaitersSelectStore,
   WaitersSelect,
 } from "@/features/waiters-select";
-import { useWaitersListStore } from "@/shared/storage/waiter";
-import { useWaitersAccountingStore } from "../storage";
+import {
+  useWaitersAccountingStore,
+  useWaitersListStore,
+} from "@/shared/storage/waiter";
 import { cn } from "@/shared/lib";
 import { waiterAccountingCardGrid } from "@/shared/constants";
 import { Button, Input } from "@/shared/ui";
@@ -16,6 +18,10 @@ import {
 import { normalizeInputNumberValue } from "@/shared/lib";
 import { GrUserWorker } from "react-icons/gr";
 import { useCallback } from "react";
+import {
+  useComputeWaitersEarnings,
+  useToggleWaiterSelected,
+} from "@/shared/hooks";
 
 const tableHead = ["Официант", "На карте", "Часы", "Чаевые"];
 
@@ -34,45 +40,12 @@ export const WaitersAccounting = () => {
     setEarnings,
   } = useWaitersAccountingStore();
 
+  const toggleWaiterSelected = useToggleWaiterSelected();
+  const computeWaitersEarnings = useComputeWaitersEarnings();
+
   const selectedWaiters = waitersList
     .filter((waiter) => selectedWaitersIds.has(waiter.id))
     .sort((a, b) => a.name.localeCompare(b.name));
-
-  const toggleWaiterSelected = useCallback(
-    (waiter: IWaiter) => {
-      const newSelectedWaiters = new Set(selectedWaitersIds);
-
-      const newHours = new Map(hours);
-      const newCards = new Map(cards);
-      const newEarnings = new Map(earnings);
-      const isSelected = newSelectedWaiters.has(waiter.id);
-
-      if (isSelected) {
-        newCards.delete(waiter.id);
-        newHours.delete(waiter.id);
-        newEarnings.delete(waiter.id);
-        newSelectedWaiters.delete(waiter.id);
-      } else {
-        newHours.set(waiter.id, 12);
-        newCards.set(waiter.id, 0);
-        newEarnings.set(waiter.id, 0);
-        newSelectedWaiters.add(waiter.id);
-      }
-
-      setCards(newCards);
-      setHours(newHours);
-      setEarnings(newEarnings);
-      setSelectedWaiters(newSelectedWaiters);
-
-      computeWaitersEarnings({
-        cashTips,
-        hours: newHours,
-        cards: newCards,
-        selectedWaitersIds: newSelectedWaiters,
-      });
-    },
-    [hours, cards, earnings, selectedWaitersIds, setSelectedWaiters]
-  );
 
   const handleUnselectAll = () => {
     setSelectedWaiters(new Set());
@@ -83,36 +56,6 @@ export const WaitersAccounting = () => {
 
   const openWaitersSelect = () =>
     useWaitersSelectStore.setState({ isOpen: true });
-
-  const computeWaitersEarnings = useCallback(
-    ({
-      cashTips,
-      hours,
-      cards,
-      selectedWaitersIds,
-    }: {
-      cashTips: number;
-      hours: Map<string, number>;
-      cards: Map<string, number>;
-      selectedWaitersIds: Set<IWaiter["id"]>;
-    }) => {
-      const totalTips =
-        cashTips + [...cards.values()].reduce((acc, curr) => acc + curr, 0);
-      let totalHours = [...hours.values()].reduce((acc, curr) => acc + curr, 0);
-      const tipsPerHour = totalTips / totalHours;
-
-      const earnings = new Map();
-      for (const waiterId of selectedWaitersIds) {
-        earnings.set(
-          waiterId,
-          Math.floor(tipsPerHour * (hours.get(waiterId) || 0))
-        );
-      }
-
-      setEarnings(earnings);
-    },
-    [setEarnings]
-  );
 
   const handleWaiterHoursChange: WaiterHoursChangeHandler = useCallback(
     (waiterId, hoursValue) => {

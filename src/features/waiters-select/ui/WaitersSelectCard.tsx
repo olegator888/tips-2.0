@@ -5,13 +5,13 @@ import { cn } from "@/shared/lib";
 interface Props {
   waiter: IWaiter;
   isSelected: boolean;
-  toggleWaiterSelected: (waiter: IWaiter) => void;
+  toggleWaiterSelected: (waiterId: IWaiter["id"]) => void;
 }
 
 export const WaitersSelectCard = (props: Props) => {
   const { waiter, isSelected, toggleWaiterSelected } = props;
 
-  const onClick = () => toggleWaiterSelected(waiter);
+  const onClick = () => toggleWaiterSelected(waiter.id);
 
   return (
     <Button

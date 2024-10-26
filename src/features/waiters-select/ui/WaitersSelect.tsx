@@ -14,7 +14,7 @@ import { IWaiter } from "@/entities/waiter";
 
 interface Props {
   unselectAll: () => void;
-  toggleWaiterSelected: (waiter: IWaiter) => void;
+  toggleWaiterSelected: (waiterId: IWaiter["id"]) => void;
 }
 
 export const WaitersSelect = memo((props: Props) => {
@@ -43,7 +43,7 @@ export const WaitersSelect = memo((props: Props) => {
             Выберите официантов текущей смены
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-wrap gap-2.5 max-h-[60vh] overflow-y-auto justify-center pb-12">
+        <div className="flex flex-wrap gap-2.5 max-h-[60vh] overflow-y-auto justify-center pb-12 px-1">
           {waitersSorted.map((waiter) => (
             <WaitersSelectCard
               key={waiter.id}
