@@ -20,6 +20,8 @@ import {
   useComputeWaitersEarnings,
   useToggleWaiterSelected,
 } from "@/shared/hooks";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { withAlert } from "@/features/alert";
 
 const tableHead = ["Официант", "На карте", "Часы", "Чаевые"];
 
@@ -45,12 +47,16 @@ export const WaitersAccounting = () => {
     .filter((waiter) => selectedWaitersIds.has(waiter.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const handleUnselectAll = () => {
-    setSelectedWaiters(new Set());
-    setHours(new Map());
-    setCards(new Map());
-    setEarnings(new Map());
-  };
+  const handleUnselectAll = withAlert({
+    onConfirm: () => {
+      setSelectedWaiters(new Set());
+      setHours(new Map());
+      setCards(new Map());
+      setEarnings(new Map());
+    },
+    title: "Очистить введенные данные",
+    subtitle: "Вы уверены? Действие необратимо",
+  });
 
   const openWaitersSelect = () =>
     useWaitersSelectStore.setState({ isOpen: true });
@@ -146,7 +152,7 @@ export const WaitersAccounting = () => {
             </>
           )}
           {selectedWaiters.length > 0 && (
-            <div className="py-3 shrink-0 flex items-center gap-2 px-1">
+            <div className="py-2 shrink-0 flex items-center gap-2 px-1">
               <Input
                 placeholder="Суммарные чаевые наличкой"
                 type="tel"
@@ -154,17 +160,26 @@ export const WaitersAccounting = () => {
                 value={cashTips || ""}
                 onChange={handleTotalTipsChange}
               />
-              <Button className="shrink-0" onClick={openWaitersSelect}>
-                <GrUserWorker />
-              </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  className="shrink-0 w-10 h-10 p-0"
+                  variant="destructive"
+                  onClick={handleUnselectAll}
+                >
+                  <FaRegTrashCan />
+                </Button>
+                <Button
+                  className="shrink-0 w-10 h-10 p-0"
+                  onClick={openWaitersSelect}
+                >
+                  <GrUserWorker />
+                </Button>
+              </div>
             </div>
           )}
         </div>
       </div>
-      <WaitersSelect
-        toggleWaiterSelected={toggleWaiterSelected}
-        unselectAll={handleUnselectAll}
-      />
+      <WaitersSelect toggleWaiterSelected={toggleWaiterSelected} />
     </>
   );
 };

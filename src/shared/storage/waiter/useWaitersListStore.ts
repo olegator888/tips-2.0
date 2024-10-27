@@ -8,6 +8,7 @@ interface State {
 interface Actions {
   addWaiter: (waiter: IWaiter) => void;
   removeWaiter: (waiterId: IWaiter["id"]) => void;
+  removeAllWaiters: () => void;
 }
 
 const mockWaiters: IWaiter[] = Array(20)
@@ -27,5 +28,9 @@ export const useWaitersListStore = create<State & Actions>((set) => ({
   removeWaiter: (waiterId) =>
     set((prev) => ({
       waitersList: prev.waitersList.filter((waiter) => waiter.id !== waiterId),
+    })),
+  removeAllWaiters: () =>
+    set(() => ({
+      waitersList: [],
     })),
 }));

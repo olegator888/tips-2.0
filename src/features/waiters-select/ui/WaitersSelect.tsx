@@ -15,12 +15,11 @@ import { WaitersSelectCard } from "./WaitersSelectCard.tsx";
 import { IWaiter } from "@/entities/waiter";
 
 interface Props {
-  unselectAll: () => void;
   toggleWaiterSelected: (waiterId: IWaiter["id"]) => void;
 }
 
 export const WaitersSelect = memo((props: Props) => {
-  const { toggleWaiterSelected, unselectAll } = props;
+  const { toggleWaiterSelected } = props;
 
   const { isOpen, selectedWaiters, setIsOpen } = useWaitersSelectStore();
   const { waitersList } = useWaitersListStore();
@@ -45,7 +44,7 @@ export const WaitersSelect = memo((props: Props) => {
             Выберите официантов текущей смены
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-wrap gap-2.5 max-h-[60vh] overflow-y-auto justify-center pb-12 px-1">
+        <div className="flex flex-wrap gap-2.5 max-h-[60vh] overflow-y-auto justify-center pb-4 px-1">
           {waitersSorted.map((waiter) => (
             <WaitersSelectCard
               key={waiter.id}
@@ -55,15 +54,6 @@ export const WaitersSelect = memo((props: Props) => {
             />
           ))}
         </div>
-        {selectedWaiters.size > 0 && (
-          <Button
-            variant="destructive"
-            className="absolute bottom-3 w-[calc(100%_-_16px)] left-1/2 -translate-x-1/2"
-            onClick={unselectAll}
-          >
-            Убрать всех
-          </Button>
-        )}
       </DrawerContent>
     </Drawer>
   );

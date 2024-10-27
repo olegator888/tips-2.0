@@ -11,9 +11,19 @@ import {
 } from "@/shared/ui";
 
 export const Alert = () => {
-  const { isOpen, title, subtitle } = useAlertStore();
+  const { isOpen, title, subtitle, onConfirm, onCancel } = useAlertStore();
 
   const onOpenChange = (isOpen: boolean) => useAlertStore.setState({ isOpen });
+
+  const handleConfirm = () => {
+    onConfirm?.();
+    onOpenChange(false);
+  };
+
+  const handleCancel = () => {
+    onCancel?.();
+    onOpenChange(false);
+  };
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
@@ -25,9 +35,11 @@ export const Alert = () => {
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
-          <Button variant="destructive">Подтвердить</Button>
+          <Button variant="destructive" onClick={handleConfirm}>
+            Подтвердить
+          </Button>
           <DrawerClose asChild>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={handleCancel}>
               Отмена
             </Button>
           </DrawerClose>

@@ -1,23 +1,22 @@
-import { InputHTMLAttributes, memo, useEffect, useMemo, useRef } from "react";
+import { InputHTMLAttributes, memo, useMemo } from "react";
 import { IBanquetAccounting } from "../model";
 import { Button, Input } from "@/shared/ui";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { banquetAccountingCardGrid } from "@/shared/constants";
 import { cn, normalizeInputNumberValue } from "@/shared/lib";
-import { InputChangeHandler, InputKeyDownHandler } from "@/shared/model";
+import { InputChangeHandler } from "@/shared/model";
 
 interface Props {
   data: IBanquetAccounting;
   index: number;
+  isRemoveAvailable: boolean;
   removeBanquet: (id: string) => void;
   updateBanquet: (data: Partial<IBanquetAccounting>) => void;
-  onInputKeyDown: InputKeyDownHandler;
 }
 
 export const BanquetAccountingCard = memo((props: Props) => {
-  const { data, index, removeBanquet, updateBanquet, onInputKeyDown } = props;
-
-  const preorderInputRef = useRef<HTMLInputElement | null>(null);
+  const { data, index, isRemoveAvailable, removeBanquet, updateBanquet } =
+    props;
 
   const handlePreorderChange: InputChangeHandler = (e) => {
     updateBanquet({
@@ -40,24 +39,24 @@ export const BanquetAccountingCard = memo((props: Props) => {
   const inputProps: Partial<InputHTMLAttributes<HTMLInputElement>> = useMemo(
     () => ({
       className: "h-[30px] text-center",
-      onKeyDown: onInputKeyDown,
       type: "tel",
       inputMode: "numeric",
     }),
-    [onInputKeyDown]
+    []
   );
 
-  useEffect(() => {
-    if (!preorderInputRef.current) return;
-    preorderInputRef.current.focus();
-  }, []);
-
   return (
-    <div className={cn(banquetAccountingCardGrid)}>
+    <div
+      className={cn(
+        "grid items-center gap-2",
+        isRemoveAvailable
+          ? banquetAccountingCardGrid
+          : "grid-cols-[15px_1fr_1fr]"
+      )}
+    >
       <div className="text-sm">{index + 1}.</div>
       <Input
         {...inputProps}
-        ref={preorderInputRef}
         placeholder="Предзаказ"
         value={data.preorder || ""}
         onChange={handlePreorderChange}
@@ -68,13 +67,15 @@ export const BanquetAccountingCard = memo((props: Props) => {
         value={data.order || ""}
         onChange={handleOrderChange}
       />
-      <Button
-        variant="outline"
-        className="h-[30px] w-[30px] p-0"
-        onClick={handleRemoveBanquet}
-      >
-        <FaRegTrashCan className="text-rose-500" />
-      </Button>
+      {isRemoveAvailable && (
+        <Button
+          variant="outline"
+          className="h-[30px] w-[30px] p-0"
+          onClick={handleRemoveBanquet}
+        >
+          <FaRegTrashCan className="text-rose-500" />
+        </Button>
+      )}
     </div>
   );
 });

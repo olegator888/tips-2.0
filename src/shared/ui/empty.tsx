@@ -2,8 +2,8 @@ import { Button } from "./button";
 
 interface Props {
   text: string;
-  actionText: string;
-  action: () => void;
+  actionText?: string;
+  action?: () => void;
 }
 
 export const Empty = (props: Props) => {
@@ -13,7 +13,7 @@ export const Empty = (props: Props) => {
       <p className="text-[18px] text-center italic text-muted-foreground max-w-[350px]">
         {text}
       </p>
-      <Button onClick={action}>{actionText}</Button>
+      {action && actionText && <Button onClick={action}>{actionText}</Button>}
     </div>
   );
 };
