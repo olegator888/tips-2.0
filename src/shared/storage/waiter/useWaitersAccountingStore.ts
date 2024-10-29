@@ -1,4 +1,6 @@
 import { IWaiter } from "@/entities/waiter";
+import { loadMapFromLocalStorage, saveMapToLocalStorage } from "@/shared/lib";
+import { useEffect } from "react";
 import { create } from "zustand";
 
 interface State {
@@ -25,3 +27,39 @@ export const useWaitersAccountingStore = create<State & Actions>((set) => ({
   setCards: (cards) => set({ cards }),
   setEarnings: (earnings) => set({ earnings }),
 }));
+
+export const useWaitersAccountingLS = () => {
+  const {
+    cashTips,
+    hours,
+    cards,
+    earnings,
+    setCashTips,
+    setHours,
+    setCards,
+    setEarnings,
+  } = useWaitersAccountingStore();
+
+  useEffect(() => {
+    setCashTips(Number(JSON.parse(localStorage.getItem("cashTips") || "0")));
+    setHours(loadMapFromLocalStorage("hours"));
+    setCards(loadMapFromLocalStorage("cards"));
+    setEarnings(loadMapFromLocalStorage("earnings"));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cashTips", JSON.stringify(cashTips));
+  }, [cashTips]);
+
+  useEffect(() => {
+    saveMapToLocalStorage("hours", hours);
+  }, [hours]);
+
+  useEffect(() => {
+    saveMapToLocalStorage("cards", cards);
+  }, [cards]);
+
+  useEffect(() => {
+    saveMapToLocalStorage("earnings", earnings);
+  }, [earnings]);
+};

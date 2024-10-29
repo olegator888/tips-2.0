@@ -1,6 +1,7 @@
 import { WaiterCard } from "@/entities/waiter";
 import { WaitersSelect } from "@/features/waiters-select";
 import {
+  useWaitersAccountingLS,
   useWaitersAccountingStore,
   useWaitersListStore,
   useWaitersSelectStore,
@@ -26,6 +27,8 @@ import { withAlert } from "@/features/alert";
 const tableHead = ["Официант", "На карте", "Часы", "Чаевые"];
 
 export const WaitersAccounting = () => {
+  useWaitersAccountingLS();
+
   const { waitersList } = useWaitersListStore();
   const { selectedWaiters: selectedWaitersIds, setSelectedWaiters } =
     useWaitersSelectStore();

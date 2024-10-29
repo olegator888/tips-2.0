@@ -1,16 +1,19 @@
-import { useBanquetsAccountingStore } from "../storage";
+import {
+  useBanquetsAccountingLS,
+  useBanquetsAccountingStore,
+} from "../storage";
 import { Empty } from "@/shared/ui";
 import { useCallback, useRef } from "react";
 import { BanquetsList } from "./BanquetsList";
 import { ResultsBlock } from "./ResultsBlock";
 import { socket } from "@/shared/websockets";
-import { useBanquetsAccountingWebsockets } from "../hooks";
 import { v4 } from "uuid";
 import { BanquetsWebsocketEvent } from "../model";
 import { BanquetsAccountingHeader } from "./BanquetsAccountingHeader";
-import { useWebsocketRoom } from "../hooks";
+import { useWebsocketRoom, useBanquetsAccountingWebsockets } from "../hooks";
 
 export const BanquetsAccounting = () => {
+  useBanquetsAccountingLS();
   useBanquetsAccountingWebsockets();
   useWebsocketRoom();
 

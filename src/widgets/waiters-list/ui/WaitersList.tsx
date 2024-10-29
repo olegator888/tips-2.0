@@ -1,11 +1,13 @@
 import { IWaiter, WaiterCard } from "@/entities/waiter";
-import { useWaitersListStore } from "@/shared/storage/waiter";
+import { useWaitersListLS, useWaitersListStore } from "@/shared/storage/waiter";
 import { WaiterCreate } from "@/features/waiter-create";
 import { useMemo } from "react";
 import { useToggleWaiterSelected } from "@/shared/hooks";
 import { Empty } from "@/shared/ui";
 
 export const WaitersList = () => {
+  useWaitersListLS();
+
   const { waitersList, removeWaiter } = useWaitersListStore();
 
   const waitersSorted = useMemo(

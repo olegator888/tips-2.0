@@ -1,4 +1,5 @@
 import { IWaiter } from "@/entities/waiter";
+import { useEffect } from "react";
 import { create } from "zustand";
 
 interface State {
@@ -6,6 +7,7 @@ interface State {
 }
 
 interface Actions {
+  setWaitersList: (waitersList: IWaiter[]) => void;
   addWaiter: (waiter: IWaiter) => void;
   removeWaiter: (waiterId: IWaiter["id"]) => void;
   removeAllWaiters: () => void;
@@ -21,6 +23,7 @@ const mockWaiters: IWaiter[] = Array(20)
 export const useWaitersListStore = create<State & Actions>((set) => ({
   waitersList: mockWaiters,
 
+  setWaitersList: (waitersList) => set(() => ({ waitersList })),
   addWaiter: (waiter) =>
     set((prev) => ({
       waitersList: [...prev.waitersList, waiter],
@@ -34,3 +37,15 @@ export const useWaitersListStore = create<State & Actions>((set) => ({
       waitersList: [],
     })),
 }));
+
+export const useWaitersListLS = () => {
+  const { waitersList, setWaitersList } = useWaitersListStore();
+
+  useEffect(() => {
+    setWaitersList(JSON.parse(localStorage.getItem("waitersList") || "[]"));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("waitersList", JSON.stringify(waitersList));
+  }, [waitersList]);
+};

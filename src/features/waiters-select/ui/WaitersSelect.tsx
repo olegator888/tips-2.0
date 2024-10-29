@@ -5,19 +5,22 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/shared/ui";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useMemo } from "react";
 import {
   useWaitersListStore,
   useWaitersSelectStore,
 } from "@/shared/storage/waiter";
 import { WaitersSelectCard } from "./WaitersSelectCard.tsx";
 import { IWaiter } from "@/entities/waiter";
+import { useWaitersSelectLS } from "../hooks";
 
 interface Props {
   toggleWaiterSelected: (waiterId: IWaiter["id"]) => void;
 }
 
 export const WaitersSelect = memo((props: Props) => {
+  useWaitersSelectLS();
+
   const { toggleWaiterSelected } = props;
 
   const { isOpen, selectedWaiters, setIsOpen } = useWaitersSelectStore();
@@ -27,12 +30,6 @@ export const WaitersSelect = memo((props: Props) => {
     () => waitersList.sort((a, b) => a.name.localeCompare(b.name)),
     [waitersList]
   );
-
-  useEffect(() => {
-    if (selectedWaiters.size === 0) {
-      setIsOpen(true);
-    }
-  }, []);
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
