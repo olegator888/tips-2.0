@@ -1,2 +1,2 @@
 export * from "./useBanquetsAccountingWebsockets";
-export * from "./useWebsocketRooms";
+export * from "./useWebsocketRoom";

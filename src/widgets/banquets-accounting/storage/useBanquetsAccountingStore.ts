@@ -1,5 +1,5 @@
 import { IBanquetAccounting } from "@/entities/banquet";
-import { v4 } from "uuid";
+import { FIRST_BANQUET_ID } from "@/shared/constants";
 import { create } from "zustand";
 
 interface State {
@@ -17,8 +17,10 @@ interface Actions {
   setBar: (value: number) => void;
 }
 
+const initialBanquets = [{ id: FIRST_BANQUET_ID, order: 0, preorder: 0 }];
+
 export const useBanquetsAccountingStore = create<State & Actions>((set) => ({
-  banquets: [{ id: "first banquet id", order: 0, preorder: 0 }],
+  banquets: [...initialBanquets],
   kitchen: 0,
   bar: 0,
 
@@ -30,8 +32,7 @@ export const useBanquetsAccountingStore = create<State & Actions>((set) => ({
     set((state) => ({
       banquets: state.banquets.filter((banquet) => banquet.id !== id),
     })),
-  removeAllBanquets: () =>
-    set({ banquets: [{ id: v4(), order: 0, preorder: 0 }] }),
+  removeAllBanquets: () => set({ banquets: [...initialBanquets] }),
   updateBanquet: (payload: Partial<IBanquetAccounting>) =>
     set((state) => ({
       banquets: state.banquets.map((banquet) =>

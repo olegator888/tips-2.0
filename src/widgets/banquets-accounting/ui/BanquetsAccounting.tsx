@@ -8,11 +8,11 @@ import { useBanquetsAccountingWebsockets } from "../hooks";
 import { v4 } from "uuid";
 import { BanquetsWebsocketEvent } from "../model";
 import { BanquetsAccountingHeader } from "./BanquetsAccountingHeader";
-import { useWebsocketRooms } from "../hooks";
+import { useWebsocketRoom } from "../hooks";
 
 export const BanquetsAccounting = () => {
   useBanquetsAccountingWebsockets();
-  useWebsocketRooms();
+  useWebsocketRoom();
 
   const { banquets, addBanquet } = useBanquetsAccountingStore();
 
