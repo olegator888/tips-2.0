@@ -9,7 +9,7 @@ interface State {
 }
 
 interface Actions {
-  addBanquet: () => void;
+  addBanquet: (payload: IBanquetAccounting) => void;
   removeBanquet: (id: string) => void;
   removeAllBanquets: () => void;
   updateBanquet: (payload: Partial<IBanquetAccounting>) => void;
@@ -18,13 +18,13 @@ interface Actions {
 }
 
 export const useBanquetsAccountingStore = create<State & Actions>((set) => ({
-  banquets: [{ id: v4(), order: 0, preorder: 0 }],
+  banquets: [{ id: "first banquet id", order: 0, preorder: 0 }],
   kitchen: 0,
   bar: 0,
 
-  addBanquet: () =>
+  addBanquet: (payload: IBanquetAccounting) =>
     set((state) => ({
-      banquets: [...state.banquets, { id: v4(), order: 0, preorder: 0 }],
+      banquets: [...state.banquets, payload],
     })),
   removeBanquet: (id: string) =>
     set((state) => ({

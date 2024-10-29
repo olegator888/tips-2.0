@@ -4,6 +4,8 @@ import { Button } from "@/shared/ui";
 import { FaPlus, FaRegTrashCan } from "react-icons/fa6";
 import { memo, useEffect } from "react";
 import { cn, formatNumberWithSpaces } from "@/shared/lib";
+import { socket } from "@/shared/websockets";
+import { BanquetsWebsocketEvent } from "../model";
 
 interface Props {
   handleAddBanquet: () => void;
@@ -16,7 +18,10 @@ export const ResultsBlock = memo((props: Props) => {
     useBanquetsAccountingStore();
 
   const handleRemoveAllBanquets = withAlert({
-    onConfirm: removeAllBanquets,
+    onConfirm: () => {
+      removeAllBanquets();
+      socket.emit(BanquetsWebsocketEvent.REMOVE_ALL_BANQUETS);
+    },
     title: "Удалить все банкеты",
     subtitle:
       "Вы уверены, что хотите удалить все банкеты? Введенные данные не сохранятся",
