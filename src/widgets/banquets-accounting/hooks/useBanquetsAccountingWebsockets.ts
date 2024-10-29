@@ -12,5 +12,5 @@ export const useBanquetsAccountingWebsockets = () => {
     socket.on(BanquetsWebsocketEvent.UPDATE_BANQUET, updateBanquet);
     socket.on(BanquetsWebsocketEvent.REMOVE_BANQUET, removeBanquet);
     socket.on(BanquetsWebsocketEvent.REMOVE_ALL_BANQUETS, removeAllBanquets);
-  }, [addBanquet, updateBanquet, removeBanquet, removeAllBanquets]);
+  }, []);
 };

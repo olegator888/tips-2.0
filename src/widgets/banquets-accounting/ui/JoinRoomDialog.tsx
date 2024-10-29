@@ -15,6 +15,7 @@ import { v4 } from "uuid";
 import { useRoomStore } from "../storage";
 import { useState } from "react";
 import { InputChangeHandler } from "@/shared/model";
+import { useUserDataStore } from "@/shared/storage/user";
 
 interface Props {
   open: boolean;
@@ -25,7 +26,7 @@ interface Props {
 export const JoinRoomDialog = (props: Props) => {
   const { open, onOpenChange, isCreate } = props;
 
-  const [userName, setUserName] = useState("");
+  const { userName, setUserName } = useUserDataStore();
   const [roomId, setRoomId] = useState("");
 
   const { setCurrentRoom } = useRoomStore();
